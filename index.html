@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FNF 6周年庆典 🎵</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a0a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+        }
+        /* 粒子背景 */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+        .particle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: rgba(255, 107, 129, 0.3);
+            border-radius: 50%;
+            animation: float 15s infinite;
+        }
+        .particle:nth-child(2n) {
+            background: rgba(78, 205, 196, 0.3);
+            animation-delay: -5s;
+        }
+        .particle:nth-child(3n) {
+            background: rgba(255, 159, 243, 0.3);
+            animation-delay: -10s;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+        }
+        /* 主容器 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        /* 头部 */
+        header {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        h1 {
+            font-size: 3.5em;
+            background: linear-gradient(90deg, #ff6b81, #ff9ff3, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 10px rgba(255, 107, 129, 0.5)); }
+            to { filter: drop-shadow(0 0 20px rgba(78, 205, 196, 0.5)); }
+        }
+        .subtitle {
+            font-size: 1.3em;
+            color: #aaa;
+            margin-bottom: 30px;
+        }
+        /* 倒计时 */
+        .countdown {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .countdown-item {
+            background: linear-gradient(145deg, #1f153a, #0d1117);
+            border: 2px solid #ff6b81;
+            border-radius: 15px;
+            padding: 20px 30px;
+            min-width: 100px;
+            text-align: center;
+        }
+        .countdown-number {
+            font-size: 3em;
+            font-weight: bold;
+            color: #4ecdc4;
+        }
+        .countdown-label {
+            font-size: 0.9em;
+            color: #888;
+        }
+        /* 区块标题 */
+        .section-title {
+            text-align: center;
+            font-size: 2em;
+            margin: 60px 0 30px;
+            color: #ff9ff3;
+            position: relative;
+        }
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, #ff6b81, #4ecdc4);
+            margin: 15px auto 0;
+        }
+        /* 角色画廊 */
+        .character-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+        }
+        .character-card {
+            background: linear-gradient(145deg, rgba(26, 10, 46, 0.8), rgba(15, 52, 96, 0.8));
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .character-card:hover {
+            border-color: #ff6b81;
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(255, 107, 129, 0.3);
+        }
+        .character-icon {
+            font-size: 4em;
+            margin-bottom: 10px;
+        }
+        .character-name {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #ff9ff3;
+        }
+        .character-desc {
+            font-size: 0.85em;
+            color: #888;
+            margin-top: 5px;
+        }
+        /* 时间线 */
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 3px;
+            height: 100%;
+            background: linear-gradient(180deg, #ff6b81, #4ecdc4);
+            border-radius: 3px;
+        }
+        .timeline-item {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            margin-bottom: 30px;
+            position: relative;
+            padding: 20px;
+            width: 50%;
+        }
+        .timeline-item:nth-child(odd) {
+            align-self: flex-start;
+            padding-right: 40px;
+            text-align: right;
+        }
+        .timeline-item:nth-child(even) {
+            align-self: flex-end;
+            margin-left: 50%;
+            padding-left: 40px;
+            text-align: left;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #ff6b81;
+            border-radius: 50%;
+        }
+        .timeline-item:nth-child(odd)::before {
+            right: -10px;
+        }
+        .timeline-item:nth-child(even)::before {
+            left: -10px;
+        }
+        .timeline-content {
+            background: linear-gradient(145deg, rgba(26, 10, 46, 0.8), rgba(15, 52, 96, 0.8));
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 107, 129, 0.3);
+        }
+        .timeline-year {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #4ecdc4;
+            margin-bottom: 8px;
+        }
+        .timeline-text {
+            color: #ccc;
+            line-height: 1.6;
+        }
+        /* 页脚 */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 60px;
+            color: #666;
+            border-top: 1px solid rgba(255, 107, 129, 0.3);
+        }
+        footer a {
+            color: #ff9ff3;
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            h1 { font-size: 2em; }
+            .countdown-item { min-width: 70px; padding: 15px; }
+            .countdown-number { font-size: 2em; }
+            .timeline::before { left: 20px; }
+            .timeline-item { width: 100%; margin-left: 0 !important; padding-left: 50px !important; text-align: left !important; }
+            .timeline-item::before { left: 10px !important; right: auto !important; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 粒子背景 -->
+    <div class="particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>🎤 Friday Night Funkin'</h1>
+            <p class="subtitle">10.05.2020 – 10.05.2026 | 6 周年快乐！</p>
+
+            <div class="countdown" id="countdown">
+                <div class="countdown-item">
+                    <div class="countdown-number" id="days">0</div>
+                    <div class="countdown-label">天</div>
+                </div>
+                <div class="countdown-item">
+                    <countdown-number" id="hours">0</countdown-number>
+                    <div class="countdown-label">时</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-number" id="minutes">0</div>
+                    <div class="countdown-label">分</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-number" id="seconds">0</div>
+                    <div class="countdown-label">秒</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- 角色画廊 -->
+        <h2 class="section-title">🎮 经典角色</h2>
+        <div class="character-gallery">
+            <div class="character-card">
+                <div class="character-icon">💙</div>
+                <div class="character-name">Boyfriend</div>
+                <div class="character-desc">蓝头发的说唱小子</div>
+            </div>
+            <div class="character-card">
+                <div class="character-icon">❤️</div>
+                <div class="character-name">Girlfriend</div>
+                <div class="character-icon">GF</div>
+                <div class="character-desc">音箱上最酷的女孩</div>
+            </div>
+            <div class="character-card">
+                <div class="character-icon">💀</div>
+                <div class="character-name">Daddy Dearest</div>
+                <div class="character-desc">第一周目的老爸</div>
+            </div>
+            <div class="character-card">
+                <div class="character-icon">🦷</div>
+                <div class="character-name">Whitty</div>
+                <div class="character-desc">模组界的传奇</div>
+            </div>
+            <div class="character-card">
+                <div class="character-icon">🔥</div>
+                <div class="character-name">Tricky</div>
+                <div class="character-desc">疯狂的小丑</div>
+            </div>
+            <div class="character-card">
+                <div class="character-icon">💀</div>
+                <div class="character-name">Tabi</div>
+                <div class="character-desc">被遗忘的男友</div>
+            </div>
+            <div class="character-card">
+                <div class="character-icon">☁️</div>
+                <div class="character-name">Sky</div>
+                <div class="character-desc">天空中的对手</div>
+            </div>
+            <div class="character-card">
+                <div class="character-icon">🎸</div>
+                <div class="character-name">Senpai</div>
+                <div class="character-desc">校园里的暗恋</div>
+            </div>
+            <div class="character-card">
+                <div class="character-icon">🤖</div>
+                <div class="character-name">Tankman</div>
+                <div class="character-desc">第七周目的将军</div>
+            </div>
+        </div>
+
+        <!-- 时间线 -->
+        <h2 class="section-title">📜 六年历程</h2>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-year">2020.10</div>
+                    <div class="timeline-text">NinjaMuffin99 和三位朋友为 Ludum Dare 47 制作了 FNF 原型，发布到 Newgrounds 上后一夜爆火。</div>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-year">2021.02</div>
+                    <div class="timeline-text">第七周目 Tankman 发布，官方故事线完结。玩家们高呼：「这就是结局吗？」</div>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-year">2021 夏</div>
+                    <div class="timeline-text">模组大爆发！Whitty、Tricky、Sky、Tabi 等高质量模组扎堆发布，TikTok 和 YouTube 上 FNF 视频霸榜。</div>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-year">2022</div>
+                    <div class="timeline-text">模组创作进入深水区，Psych Engine 等引擎出现，做模组门槛进一步降低。</div>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-year">2025</div>
+                    <div class="timeline-text">FNF 5 周年，社区制作了大量纪念内容。官方也陆续放出新的进度消息。</div>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-year">2026.10</div>
+                    <div class="timeline-text">🎉 FNF 6 周年！从四个高中生的游戏马拉松作品，到拥有数万模组和全球粉丝的文化现象。</div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Made with 💜 by a FNF fan | 2020 – 2026</p>
+            <p>Friday Night Funkin' © 2020 NinjaMuffin99</p>
+        </footer>
+    </div>
+
+    <script>
+        // 倒计时：计算到 6 周年正日（2026.10.05）还剩多久，如果已过则显示"已过去 X 天"
